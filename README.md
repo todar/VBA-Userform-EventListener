@@ -1,8 +1,8 @@
 # VBA Userform EventListener
 A very easy way to add event listners to a userform.
 
-## Usage
-> Both EventListnerEmitter.cls and EventListnerItem.cls are required in order to work
+## Getting Started
+> Imported or copying both **EventListnerEmitter.cls** and **EventListnerItem.cls** are **required** in order to work!
 
 To use in a userform try this basic template to get started
 ```vb
@@ -15,6 +15,9 @@ End Sub
 ```
 
 That's it, now you can start listening for events!
+
+## Listening for the events
+Currently all events are sent to one event hanlder, see the example below to get started.
 
 ```vb
 Private Sub Emitter_EmittedEvent(Control As Object, ByVal EventName As String)
