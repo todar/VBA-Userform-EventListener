@@ -13,13 +13,23 @@ Option Compare Text
 'ARRAY OF ALL THE DIFFERENT EVENT LISTNERS
 Private EventList() As New EventListnerItem
 
-Public Event EmittedEvent(ByRef Control As Object, ByVal EventName As String)
+Public Event EmittedEvent(ByRef Control As Object, ByVal Eventname As String, ByRef EventValue As Variant)
 
 'CALLED BY EVENTLISTENERCOLLECTION CLASS - WAY OF EMITTING AN EVENT
-Public Sub EmitEvent(ByRef Control As Object, ByVal EventName As String)
+Public Sub EmitEvent(ByRef Control As Object, ByVal Eventname As String, ByRef EventValue As Variant)
     
-    RaiseEvent EmittedEvent(Control, EventName)
+    RaiseEvent EmittedEvent(Control, Eventname, EventValue)
 
+End Sub
+
+'MUST CALL THIS IF YOU WANT TO PROGRAMATICALLY SET CONTROL. OTHERWISE EVENT'S WILL BE OFF!
+Public Sub SetFocusToControl(ByRef Control As Object)
+    
+    If Not Control Is Nothing Then
+        Control.setFocus
+        EmitEvent Control, "Focus", ""
+    End If
+    
 End Sub
 
 'ADD EVENT LISTNERS ON SPECIFIC CONTROLS - ALSO CALLED BY AddEventListnerAll
