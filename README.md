@@ -1,5 +1,5 @@
 # VBA Userform EventListener
-A very easy way to add event listners to a userform.
+A very easy way to add event listeners  to a userform.
 
 ## Getting Started
 > Importing or copying both **EventListnerEmitter.cls** and **EventListnerItem.cls** is **required** in order to work!
