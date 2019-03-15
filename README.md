@@ -17,7 +17,8 @@ End Sub
 That's it, now you can start listening for events!
 
 ## Listening for the events
-Currently all events are sent to one event hanlder, see the example below.
+
+You can listen for all events in one event hanlder **Emitter_EmittedEvent**. see the example below.
 
 ```vb
 'EXAMPLE SHOWING A BASIC WAY OF DOING A HOVER EFFECT
@@ -37,6 +38,28 @@ Private Sub Emitter_EmittedEvent(Control As Object, ByVal EventName As String, B
         
     End If
 
+End Sub
+```
+
+You can also listen just to specific events as well.
+
+```vb
+Private Sub Emitter_Focus(Control As Object)
+    
+    'CHANGE BORDER COLOR FOR TEXTBOX TO A LIGHT BLUE
+    If TypeName(Control) = "TextBox" Then
+        Control.BorderColor = 16034051
+    End If
+    
+End Sub
+
+Private Sub Emitter_Blur(Control As Object)
+    
+    'CHANGE BORDER COLOR BACK TO A LIGHT GREY
+    If TypeName(Control) = "TextBox" Then
+        Control.BorderColor = 12434877
+    End If
+    
 End Sub
 ```
 
