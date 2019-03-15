@@ -17,7 +17,7 @@ Attribute pEmitter.VB_VarHelpID = -1
 'CONTROLS THAT HAVE THE EVENTS
 Private WithEvents Form As MSForms.UserForm
 Attribute Form.VB_VarHelpID = -1
-Private WithEvents Txt As MSForms.TextBox
+Private WithEvents Txt As MSForms.Textbox
 Attribute Txt.VB_VarHelpID = -1
 Private WithEvents Lbl As MSForms.Label
 Attribute Lbl.VB_VarHelpID = -1
@@ -94,7 +94,7 @@ Private Sub CheckIfHoveredControl()
     
     If Not IsHoveredControl Then
         IsHoveredControl = True
-        pEmitter.EmitEvent pControl, "MouseOver", ""
+        pEmitter.EmitEvent pControl, "MouseOver", Array()
     End If
     
 End Sub
@@ -108,7 +108,7 @@ Private Sub CheckIfFocusedControl()
              pEmitter.SetFocusToControl pControl.ActiveControl
         Else
             IsFocusedControl = True
-            pEmitter.EmitEvent pControl, "Focus", ""
+            pEmitter.EmitEvent pControl, "Focus", Array()
         End If
         
     End If
@@ -137,21 +137,21 @@ End Function
 '-------------------------------------------------------------------------
 ' ONCE AN EVENT HAS EMMITED, EACH EVENT LISTNER WILL LISTEN FOR THAT EVENT
 '-------------------------------------------------------------------------
-Private Sub pEmitter_EmittedEvent(ByRef Control As Object, ByVal Eventname As String, ByRef EventValue As Variant)
+Private Sub pEmitter_EmittedEvent(ByRef Control As Object, ByVal EventName As String, ByRef EventValue As Variant)
     
     'CREATE A MOUSEOVER MOUSEOUT EVENTS
-    Select Case Eventname
+    Select Case EventName
     
         Case "MouseOver"
             If pControl.Name <> Control.Name And IsHoveredControl Then
                 IsHoveredControl = False
-                pEmitter.EmitEvent pControl, "MouseOut", ""
+                pEmitter.EmitEvent pControl, "MouseOut", Array()
             End If
             
         Case "Focus"
             If pControl.Name <> Control.Name And IsFocusedControl Then
                 IsFocusedControl = False
-                pEmitter.EmitEvent pControl, "Blur", ""
+                pEmitter.EmitEvent pControl, "Blur", Array()
             ElseIf pControl.Name = Control.Name And IsFocusedControl = False Then
                 IsFocusedControl = True
             End If
