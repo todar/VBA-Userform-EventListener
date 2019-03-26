@@ -24,20 +24,19 @@ You can listen for all events in one event hanlder **Emitter_EmittedEvent**. see
 'EXAMPLE SHOWING A BASIC WAY OF DOING A HOVER EFFECT
 Private Sub Emitter_EmittedEvent(Control As Object, ByVal EventName As String, ByRef EventValue As Variant)
     
-    'display name of control that was clicked
-    If EventName = "Click" Then
-        msgbox Control.Name
-
-    'Change color when mouseover, for a fun hover effect :)
-    ElseIf EventName = "MouseOver" And TypeName(Control) = "CommandButton" Then
-        Control.Backcolor = 9029664
-
-    'Don't forget to change it back!    
-    ElseIf EventName = "MouseOut" And TypeName(Control) = "CommandButton" Then
-         Control.Backcolor = 8435998
+    'Select statements are really handing working with these events
+    Select Case True
         
-    End If
-
+        'Change color when mouseover, for a fun hover effect :)
+        Case EventName = "MouseOver" And TypeName(Control) = "CommandButton"
+            Control.BackColor = 9029664
+        
+        'Don't forget to change it back!
+        Case EventName = "MouseOut" And TypeName(Control) = "CommandButton"
+            Control.BackColor = 8435998
+    
+    End Select
+    
 End Sub
 ```
 
