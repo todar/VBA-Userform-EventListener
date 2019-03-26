@@ -24,7 +24,7 @@ You can listen for all events in one event hanlder **Emitter_EmittedEvent**. see
 'EXAMPLE SHOWING A BASIC WAY OF DOING A HOVER EFFECT
 Private Sub Emitter_EmittedEvent(Control As Object, ByVal EventName As String, ByRef EventValue As Variant)
     
-    'Select statements are really handing working with these events
+    'Select statements are really handy working with these events
     Select Case True
         
         'Change color when mouseover, for a fun hover effect :)
