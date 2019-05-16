@@ -2,15 +2,15 @@
 A very easy way to add event listeners  to a userform.
 
 ## Getting Started
-> Importing or copying both **EventListnerEmitter.cls** and **EventListnerItem.cls** is **required** in order to work!
+> Importing or copying both **EventListenerEmitter.cls** and **EventListenerItem.cls** is **required** in order to work!
 
 Here is basic template, simply add this to a userform.
 ```vb
-Private WithEvents Emitter As EventListnerEmitter
+Private WithEvents Emitter As EventListenerEmitter
 
 Private Sub UserForm_Activate()
-    Set Emitter = New EventListnerEmitter
-    Emitter.AddEventListnerAll Me
+    Set Emitter = New EventListenerEmitter
+    Emitter.AddEventListenerAll Me
 End Sub
 ```
 
@@ -22,21 +22,21 @@ You can listen for all events in one event hanlder **Emitter_EmittedEvent**. see
 
 ```vb
 'EXAMPLE SHOWING A BASIC WAY OF DOING A HOVER EFFECT
-Private Sub Emitter_EmittedEvent(Control As Object, ByVal EventName As String, ByRef EventValue As Variant)
-    
-    'Select statements are really handy working with these events
+Private Sub Emitter_EmittedEvent(Control As Object, ByVal EventName As String, EventParameters As Scripting.Dictionary)
+
+        'Select statements are really handy working with these events
     Select Case True
-        
+
         'Change color when mouseover, for a fun hover effect :)
         Case EventName = "MouseOver" And TypeName(Control) = "CommandButton"
             Control.BackColor = 9029664
-        
+
         'Don't forget to change it back!
         Case EventName = "MouseOut" And TypeName(Control) = "CommandButton"
             Control.BackColor = 8435998
-    
+
     End Select
-    
+
 End Sub
 ```
 
