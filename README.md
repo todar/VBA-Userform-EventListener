@@ -68,3 +68,5 @@ This is in the early stages, so feel free to use it as you wish. Currently, the 
 As I have time I'll be adding more events and seeing if I have any needed improvements.
 
 Feel free to do a pull request if you added to it or improved it in any way!
+
+**Also, I've posted this code on <a href="https://codereview.stackexchange.com/questions/220370/userform-event-listener-and-emitter">codereview</a>. Feel free to make suggestions or improvements there as well!**
