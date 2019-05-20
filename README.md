@@ -22,17 +22,17 @@ You can listen for all events in one event hanlder **Emitter_EmittedEvent**. see
 
 ```vb
 'EXAMPLE SHOWING A BASIC WAY OF DOING A HOVER EFFECT
-Private Sub Emitter_EmittedEvent(Control As Object, ByVal EventName As String, EventParameters As Scripting.Dictionary)
+Private Sub Emitter_EmittedEvent(Control As Object, ByVal EventName As EmittedEvent, EventParameters As Scripting.Dictionary)
 
         'Select statements are really handy working with these events
     Select Case True
 
         'Change color when mouseover, for a fun hover effect :)
-        Case EventName = "MouseOver" And TypeName(Control) = "CommandButton"
+        Case EventName = MouseOver And TypeName(Control) = "CommandButton"
             Control.BackColor = 9029664
 
         'Don't forget to change it back!
-        Case EventName = "MouseOut" And TypeName(Control) = "CommandButton"
+        Case EventName = MouseOut And TypeName(Control) = "CommandButton"
             Control.BackColor = 8435998
 
     End Select
@@ -63,8 +63,8 @@ End Sub
 ```
 
 ## Note
-This is in the early stages, so feel free to use it as you wish. Currently the events emitted are pretty simple: Click, DblClick, MouseOver, MouseOut, MouseMove, MouseDown, and MouseUp. 
+This is in the early stages, so feel free to use it as you wish. Currently the events emitted are pretty simple: Click, DoubleClick, MouseOver, MouseOut, MouseMove, MouseDown, and MouseUp. 
 
 As I have time I'll be adding more events and seeing if I have any needed improvements.
 
-Feel free to do a pull request if you added to it!
+Feel free to do a pull request if you added to it or improved it in any way!
