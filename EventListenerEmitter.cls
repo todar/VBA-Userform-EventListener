@@ -78,7 +78,7 @@ Public Sub SetFocusToControl(ByRef Control As Object)
     'it is unaware of that event occurring.
     If Not Control Is Nothing Then
         Control.setFocus
-        EmitEvent Control, "Focus", ""
+        EmitEvent Control, "Focus", Nothing
     End If
     
 End Sub
