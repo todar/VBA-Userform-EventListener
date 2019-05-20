@@ -13,9 +13,8 @@ Option Compare Text
 'ARRAY OF ALL THE DIFFERENT EVENT ListenerS FOR EVERY USERFORM CONTROL +FORM ITSELF
 Private EventList() As New EventListenerItem
 
-'ALL CURRENT POSSIBLE EVENTS THAT CAN BE EMITTED. NOTE, EMITTEDEVENT IS SENT FOR ALL!
-Public Event EmittedEvent(ByRef Control As Object, ByVal EventName As String, ByRef EventParameters As Scripting.Dictionary)
-
+'ALL CURRENT POSSIBLE EVENTS THAT CAN BE EMITTED. NOTE, EMITTEDEVENT IS SENT FOR ALL EVENTS!
+Public Event EmittedEvent(ByRef Control As Object, ByVal EventName As EmittedEvent, ByRef EventParameters As Scripting.Dictionary)
 Public Event Click(ByRef Control As Object)
 Public Event DblClick(ByRef Control As Object, ByRef Cancel As MSForms.ReturnBoolean)
 Public Event KeyUp(ByRef Control As Object, ByRef KeyCode As MSForms.ReturnInteger, ByRef Shift As Integer)
@@ -27,12 +26,26 @@ Public Event Focus(ByRef Control As Object)
 Public Event Blur(ByRef Control As Object)
 Public Event Change(ByRef Control As Object)
 
+Public Enum EmittedEvent
+    Click
+    DoubleClick
+    MouseMove
+    MouseOut
+    MouseOver
+    MouseDown
+    MouseUp
+    KeyUp
+    KeyDown
+    Focus
+    Blur
+End Enum
+
 '***********************************************************************************
 ' PUBLIC METHODS
 '***********************************************************************************
 
 'CALLED BY EVENTLISTENERCOLLECTION CLASS - MAIN ENTRYWAY OF EMITTING ALL EVENTS
-Public Sub EmitEvent(ByRef Control As Object, ByVal EventName As String, ByRef EventParameters As Scripting.Dictionary)
+Public Sub EmitEvent(ByRef Control As Object, ByVal EventName As EmittedEvent, Optional ByRef EventParameters As Scripting.Dictionary)
     
     'EVENT RAISED FOR ALL EVENTS. THIS IS A WAY FOR THE USER TO COLLECT FROM A SINGLE LOCATION.
     RaiseEvent EmittedEvent(Control, EventName, EventParameters)
@@ -40,31 +53,31 @@ Public Sub EmitEvent(ByRef Control As Object, ByVal EventName As String, ByRef E
     'SPECIFIC EVENTS PER OBJECT-TYPE
     Select Case EventName
     
-        Case "Click"
+        Case Click
             RaiseEvent Click(Control)
         
-        Case "DblClick"
+        Case DoubleClick
             RaiseEvent DblClick(Control, EventParameters("Cancel"))
         
-        Case "KeyUp"
+        Case KeyUp
             RaiseEvent KeyUp(Control, EventParameters("KeyCode"), EventParameters("Shift"))
             
-        Case "KeyDown"
+        Case KeyDown
             RaiseEvent KeyDown(Control, EventParameters("KeyCode"), EventParameters("Shift"))
         
-        Case "MouseOver"
+        Case MouseOver
             RaiseEvent MouseOver(Control)
             
-        Case "MouseOut"
+        Case MouseOut
             RaiseEvent MouseOut(Control)
             
-        Case "Focus"
+        Case Focus
             RaiseEvent Focus(Control)
             
-        Case "Blur"
+        Case Blur
             RaiseEvent Blur(Control)
             
-        Case "MouseMove"
+        Case MouseMove
             RaiseEvent MouseMove(Control, EventParameters("Shift"), EventParameters("X"), EventParameters("Y"))
         
     End Select
@@ -78,7 +91,7 @@ Public Sub SetFocusToControl(ByRef Control As Object)
     'it is unaware of that event occurring.
     If Not Control Is Nothing Then
         Control.setFocus
-        EmitEvent Control, "Focus", Nothing
+        EmitEvent Control, Focus
     End If
     
 End Sub

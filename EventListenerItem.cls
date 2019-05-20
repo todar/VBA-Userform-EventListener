@@ -83,8 +83,10 @@ Public Sub AddEventListener(ByRef ControlOrForm As Object, ByRef Emitter As Even
             
         Case Else
  
-            If IsUserform(ControlOrForm) Then
+            If TypeOf ControlOrForm Is MSForms.UserForm Then
                 Set Form = ControlOrForm
+            Else
+                Err.Raise 5, TypeName(Me), "Invalid control: Currently unable to listen to events on " & TypeName(ControlOrForm)
             End If
 
     End Select
@@ -100,7 +102,7 @@ Private Sub CheckIfHoveredControl()
     
     If Not IsHoveredControl Then
         IsHoveredControl = True
-        pEmitter.EmitEvent pControl, "MouseOver", Dict()
+        pEmitter.EmitEvent pControl, MouseOver
     End If
     
 End Sub
@@ -114,44 +116,29 @@ Private Sub CheckIfFocusedControl()
              pEmitter.SetFocusToControl pControl.ActiveControl
         Else
             IsFocusedControl = True
-            pEmitter.EmitEvent pControl, "Focus", Dict()
+            pEmitter.EmitEvent pControl, Focus
         End If
         
     End If
     
 End Sub
 
-'CHECK TO SEE IF OBJ IS A USERFORM
-Private Function IsUserform(ByRef Obj As Object) As Boolean
-
-    If TypeOf Obj Is MSForms.UserForm Then
-      IsUserform = True
-    End If
-
-End Function
-
-'SIMPLE DICTIONARY FACTORY - FOR EASE OF USE
-Private Function Dict(ParamArray KeyValue() As Variant) As Scripting.Dictionary
+'SIMPLE Dictionary FACTORY - FOR EASE OF USE
+Private Function ToDictionary(ParamArray KeyValuePairs() As Variant) As Scripting.Dictionary
     
     'CHECK IF THERE IS EVEN PARAMETERS
-    If Not ArrayCount(KeyValue) Mod 2 = 0 Then
-        Debug.Print "Function Dict() requires an even amount of key value arguments." _
-        & " Only provided " & ArrayCount(KeyValue)
-        Exit Function
+    Dim ArrayLenght As Long
+    ArrayLenght = UBound(KeyValuePairs) - LBound(KeyValuePairs) + 1
+    
+    If ArrayLenght Mod 2 <> 0 Then
+        Err.Raise 5, TypeName(Me), "Invalid parameters: expecting key/value pairs, but received an odd number of arguments."
     End If
     
-    Set Dict = New Scripting.Dictionary
+    Set ToDictionary = New Scripting.Dictionary
     Dim Index As Long
-    For Index = LBound(KeyValue) To UBound(KeyValue) Step 2
-        Dict.Add KeyValue(Index), KeyValue(Index + 1)
+    For Index = LBound(KeyValuePairs) To UBound(KeyValuePairs) Step 2
+        ToDictionary.Add KeyValuePairs(Index), KeyValuePairs(Index + 1)
     Next Index
-    
-End Function
-
-'USED WITH Dict To SEE IF THERE ARE AN EVEN AMOUNT OF PARAMETERS
-Private Function ArrayCount(ByVal SourceArray As Variant) As Long
-    
-    ArrayCount = UBound(SourceArray) - LBound(SourceArray) + 1
     
 End Function
 
@@ -163,21 +150,21 @@ End Function
 '----------------------------------------------------------------------------
 ' ONCE AN EVENT HAS EMMITED, EACH EVENTListenerITEM WILL LISTEN FOR THAT EVENT
 '----------------------------------------------------------------------------
-Private Sub pEmitter_EmittedEvent(ByRef Control As Object, ByVal EventName As String, ByRef EventParameters As Scripting.Dictionary)
+Private Sub pEmitter_EmittedEvent(ByRef Control As Object, ByVal EventName As EmittedEvent, ByRef EventParameters As Scripting.Dictionary)
     
     'CREATE A MOUSEOVER MOUSEOUT EVENTS
     Select Case EventName
     
-        Case "MouseOver"
+        Case MouseOver
             If pControl.Name <> Control.Name And IsHoveredControl Then
                 IsHoveredControl = False
-                pEmitter.EmitEvent pControl, "MouseOut", Dict()
+                pEmitter.EmitEvent pControl, MouseOut
             End If
             
-        Case "Focus"
+        Case Focus
             If pControl.Name <> Control.Name And IsFocusedControl Then
                 IsFocusedControl = False
-                pEmitter.EmitEvent pControl, "Blur", Dict()
+                pEmitter.EmitEvent pControl, Blur
             ElseIf pControl.Name = Control.Name And IsFocusedControl = False Then
                 IsFocusedControl = True
             End If
@@ -186,29 +173,28 @@ Private Sub pEmitter_EmittedEvent(ByRef Control As Object, ByVal EventName As St
 
 End Sub
 
-
 '------------------------------------------------------------------------
 ' USERFORM
 '------------------------------------------------------------------------
 Private Sub Form_Click()
-    pEmitter.EmitEvent pControl, "Click", Dict()
+    pEmitter.EmitEvent pControl, Click
 End Sub
 
 Private Sub Form_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
-    pEmitter.EmitEvent pControl, "DblClick", Dict("Cancel", Cancel)
+    pEmitter.EmitEvent pControl, DoubleClick, ToDictionary("Cancel", Cancel)
 End Sub
 
 Private Sub Form_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
    CheckIfHoveredControl
-   pEmitter.EmitEvent pControl, "MouseMove", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+   pEmitter.EmitEvent pControl, MouseMove, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 Private Sub Form_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-    pEmitter.EmitEvent pControl, "MouseDown", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseDown, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 Private Sub Form_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-    pEmitter.EmitEvent pControl, "MouseUp", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseUp, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 
@@ -216,34 +202,34 @@ End Sub
 ' COMMAND BUTTON
 '------------------------------------------------------------------------
 Private Sub Btn_Click()
-    pEmitter.EmitEvent pControl, "Click", Dict()
+    pEmitter.EmitEvent pControl, Click
 End Sub
 
 Private Sub Btn_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
-    pEmitter.EmitEvent pControl, "DblClick", Dict("Cancel", Cancel)
+    pEmitter.EmitEvent pControl, DoubleClick, ToDictionary("Cancel", Cancel)
 End Sub
 
 Private Sub Btn_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     CheckIfHoveredControl
-    pEmitter.EmitEvent pControl, "MouseMove", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseMove, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 Private Sub Btn_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     CheckIfFocusedControl
-    pEmitter.EmitEvent pControl, "MouseUp", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseUp, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 Private Sub Btn_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-    pEmitter.EmitEvent pControl, "MouseDown", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseDown, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 Private Sub Btn_KeyUp(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
     CheckIfFocusedControl
-    pEmitter.EmitEvent pControl, "KeyUp", Dict("KeyCode", KeyCode, "Shift", Shift)
+    pEmitter.EmitEvent pControl, KeyUp, ToDictionary("KeyCode", KeyCode, "Shift", Shift)
 End Sub
 
 Private Sub Btn_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
-    pEmitter.EmitEvent pControl, "KeyDown", Dict("KeyCode", KeyCode, "Shift", Shift)
+    pEmitter.EmitEvent pControl, KeyDown, ToDictionary("KeyCode", KeyCode, "Shift", Shift)
 End Sub
 
 
@@ -251,24 +237,24 @@ End Sub
 ' LABEL
 '------------------------------------------------------------------------
 Private Sub Lbl_Click()
-    pEmitter.EmitEvent pControl, "Click", Dict()
+    pEmitter.EmitEvent pControl, Click
 End Sub
 
 Private Sub Lbl_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
-    pEmitter.EmitEvent pControl, "DblClick", Dict("Cancel", Cancel)
+    pEmitter.EmitEvent pControl, DoubleClick, ToDictionary("Cancel", Cancel)
 End Sub
 
 Private Sub Lbl_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     CheckIfHoveredControl
-    pEmitter.EmitEvent pControl, "MouseMove", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseMove, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 Private Sub lbl_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-    pEmitter.EmitEvent pControl, "MouseDown", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseDown, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 Private Sub lbl_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-    pEmitter.EmitEvent pControl, "MouseUp", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseUp, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 
@@ -276,25 +262,25 @@ End Sub
 ' Frame
 '------------------------------------------------------------------------
 Private Sub Frm_Click()
-    pEmitter.EmitEvent pControl, "Click", Dict()
+    pEmitter.EmitEvent pControl, Click
 End Sub
 
 Private Sub Frm_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
-    pEmitter.EmitEvent pControl, "DblClick", Dict("Cancel", Cancel)
+    pEmitter.EmitEvent pControl, DoubleClick, ToDictionary("Cancel", Cancel)
 End Sub
 
 Private Sub Frm_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     CheckIfHoveredControl
-    pEmitter.EmitEvent pControl, "MouseMove", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseMove, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 Private Sub Frm_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     CheckIfFocusedControl 'FRAME DOESN'T TAKE FOCUS BUT ACTIVE CONTROL IN FRAME DOES
-    pEmitter.EmitEvent pControl, "MouseDown", Dict()
+    pEmitter.EmitEvent pControl, MouseDown
 End Sub
 
 Private Sub Frm_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-    pEmitter.EmitEvent pControl, "MouseUp", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseUp, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 
@@ -302,34 +288,34 @@ End Sub
 ' Textbox
 '------------------------------------------------------------------------
 Private Sub Txt_Click()
-    pEmitter.EmitEvent pControl, "Click", Dict()
+    pEmitter.EmitEvent pControl, Click
 End Sub
 
 Private Sub Txt_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
-    pEmitter.EmitEvent pControl, "DblClick", Dict("Cancel", Cancel)
+    pEmitter.EmitEvent pControl, DoubleClick, ToDictionary("Cancel", Cancel)
 End Sub
 
 Private Sub Txt_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     CheckIfHoveredControl
-    pEmitter.EmitEvent pControl, "MouseMove", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseMove, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 Private Sub Txt_MouseUp(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     CheckIfFocusedControl
-    pEmitter.EmitEvent pControl, "MouseUp", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseUp, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 Private Sub Txt_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-    pEmitter.EmitEvent pControl, "MouseDown", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseDown, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 Private Sub Txt_KeyUp(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
     CheckIfFocusedControl
-    pEmitter.EmitEvent pControl, "KeyUp", Dict("KeyCode", KeyCode, "Shift", Shift)
+    pEmitter.EmitEvent pControl, KeyUp, ToDictionary("KeyCode", KeyCode, "Shift", Shift)
 End Sub
 
 Private Sub Txt_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
-    pEmitter.EmitEvent pControl, "KeyDown", Dict("KeyCode", KeyCode, "Shift", Shift)
+    pEmitter.EmitEvent pControl, KeyDown, ToDictionary("KeyCode", KeyCode, "Shift", Shift)
 End Sub
 
 
@@ -337,16 +323,16 @@ End Sub
 ' Combobox
 '------------------------------------------------------------------------
 Private Sub Cmb_Click()
-    pEmitter.EmitEvent pControl, "Click", Dict()
+    pEmitter.EmitEvent pControl, Click
 End Sub
 
 Private Sub Cmb_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
-    pEmitter.EmitEvent pControl, "DblClick", Dict("Cancel", Cancel)
+    pEmitter.EmitEvent pControl, DoubleClick, ToDictionary("Cancel", Cancel)
 End Sub
 
 Private Sub Cmb_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     CheckIfHoveredControl
-    pEmitter.EmitEvent pControl, "MouseMove", Dict("Button", Button, "Shift", Shift, "X", X, "Y", Y)
+    pEmitter.EmitEvent pControl, MouseMove, ToDictionary("Button", Button, "Shift", Shift, "X", X, "Y", Y)
 End Sub
 
 
