@@ -1,10 +1,10 @@
 # VBA Userform EventListener
-A very easy way to add event listeners  to a userform.
+A very easy way to add event listeners to a userform.
 
 ## Getting Started
 > Importing or copying both **EventListenerEmitter.cls** and **EventListenerItem.cls** is **required** in order to work!
 
-Here is basic template, simply add this to a userform.
+Here is a basic template, simply add this to a userform.
 ```vb
 Private WithEvents Emitter As EventListenerEmitter
 
@@ -18,7 +18,7 @@ That's it, now you can start listening for events!
 
 ## Listening for the events
 
-You can listen for all events in one event hanlder **Emitter_EmittedEvent**. see the example below.
+You can listen for all events in one event handler **Emitter_EmittedEvent**. see the example below.
 
 ```vb
 'EXAMPLE SHOWING A BASIC WAY OF DOING A HOVER EFFECT
@@ -63,7 +63,7 @@ End Sub
 ```
 
 ## Note
-This is in the early stages, so feel free to use it as you wish. Currently the events emitted are pretty simple: Click, DoubleClick, MouseOver, MouseOut, MouseMove, MouseDown, and MouseUp. 
+This is in the early stages, so feel free to use it as you wish. Currently, the events emitted are pretty simple: Click, DoubleClick, MouseOver, MouseOut, MouseMove, MouseDown, and MouseUp. 
 
 As I have time I'll be adding more events and seeing if I have any needed improvements.
 
