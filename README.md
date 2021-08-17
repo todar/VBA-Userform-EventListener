@@ -21,25 +21,21 @@ That's it, now you can start listening for events!
 
 ## Listening for the events
 
-You can listen for all events in one event handler **Emitter_EmittedEvent**. see the example below.
+You can listen for all events in one event handler **Emitter_EmittedEvent** or each individual controls events. see the example below.
 
 ```vb
-'EXAMPLE SHOWING A BASIC WAY OF DOING A HOVER EFFECT
-Private Sub Emitter_EmittedEvent(Control As Object, ByVal EventName As EmittedEvent, EventParameters As Scripting.Dictionary)
-
-        'Select statements are really handy working with these events
+' EXAMPLE SHOWING A BASIC WAY OF DOING A HOVER EFFECT
+Private Sub Emitter_EmittedEvent(Control As Object, ByVal EventName As EmittedEvent, EventParameters As Collection)
+    ' Select statements are really handy working with these events in this way.
     Select Case True
-
-        'Change color when mouseover, for a fun hover effect :)
+        ' Change color when mouseover, for a fun hover effect :)
         Case EventName = MouseOver And TypeName(Control) = "CommandButton"
             Control.BackColor = 9029664
 
-        'Don't forget to change it back!
+        ' Don't forget to change it back!
         Case EventName = MouseOut And TypeName(Control) = "CommandButton"
             Control.BackColor = 8435998
-
     End Select
-
 End Sub
 ```
 
@@ -47,21 +43,29 @@ You can also listen just to specific events as well.
 
 ```vb
 Private Sub Emitter_Focus(Control As Object)
-    
-    'CHANGE BORDER COLOR FOR TEXTBOX TO A LIGHT BLUE
+    ' CHANGE BORDER COLOR FOR TEXTBOX TO A LIGHT BLUE
     If TypeName(Control) = "TextBox" Then
         Control.BorderColor = 16034051
     End If
-    
 End Sub
 
 Private Sub Emitter_Blur(Control As Object)
-    
-    'CHANGE BORDER COLOR BACK TO A LIGHT GREY
+    ' CHANGE BORDER COLOR BACK TO A LIGHT GREY
     If TypeName(Control) = "TextBox" Then
         Control.BorderColor = 12434877
     End If
-    
+End Sub
+```
+
+Or you can listen to specific events on specific controls
+
+```vb
+Private Sub Emitter_CommandButtonMouseOver(CommandButton As MSForms.CommandButton)
+    CommandButton.Backcolor = 9029664
+End Sub
+
+Private Sub Emitter_CommandButtonMouseOut(CommandButton As MSForms.CommandButton)
+    CommandButton.Backcolor = 8435998
 End Sub
 ```
 
